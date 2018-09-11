@@ -1,9 +1,10 @@
-lyclMiner
+alliumclMiner - based on lyclminer
 ===============
 
-lyclMiner is a high performance OpenCL Lyra2REv2 miner for AMD GCN GPUs.
+alliumclMiner is a high performance OpenCL Allium miner for AMD GCN GPUs.
 
 **Developer:** CryptoGraphics ( CrGraphics@protonmail.com )
+**Developer:** Tuxcoin Team - https://tuxcoin.io/
 
 Stratum and WorkIO implementations are based on [cpuminer-multi](https://github.com/tpruvot/cpuminer-multi)  
 Some kernels(Skein and BMW) are based on cuda and OpenCL kernels from (ccminer and sgminer projects respectively).
@@ -20,8 +21,8 @@ AMD GPU GCN 1.0 or later.
 Mesa Gallium Compute and macOS are not supported.
 
 ## Download
-* Binary releases: https://github.com/CryptoGraphics/lyclMiner/releases
-* Clone with `git clone https://github.com/CryptoGraphics/lyclMiner.git`  
+* Binary releases: Not yet
+* Clone with `git clone https://github.com/TuxcoinOrg/lyclMiner.git`  
  Follow [Building lyclMiner](#building-lyclminer).
 
 ## Quick start guide

@@ -16,9 +16,8 @@
 #include <lyclCore/ConfigFile.hpp>
 #include <external/endian.h>
 
-#include <lyclApplets/AppLyra2REv2.hpp>
+#include <lyclApplets/AppAllium.hpp>
 
-#include <lyclHostValidators/BMW.hpp>
 
 #include <chrono> // timing
 #include <algorithm> // sort
@@ -54,23 +53,23 @@ inline void work_set_target_ratio(work* work_info, const uint32_t* hash)
     }
 }
 //-----------------------------------------------------------------------------
-bool fulltestLyra(const lycl::lyraHash& hash, const uint32_t *target)
+bool fulltestAllium(const lycl::alliumHash& hash, const uint32_t *target)
 {
     bool rc = true;
 
-    for (int i = 7; i >= 0; i--)
-    {
-        if (hash.h[i] > target[i])
-        {
-            rc = false;
-            break;
-        }
-        if (hash.h[i] < target[i])
-        {
-            rc = true;
-            break;
-        }
-    }
+    // for (int i = 7; i >= 0; i--)
+    // {
+        // if (hash.h[i] > target[i])
+        // {
+            // rc = false;
+            // break;
+        // }
+        // if (hash.h[i] < target[i])
+        // {
+            // rc = true;
+            // break;
+        // }
+    // }
 
     if (global::opt_debug)
     {
@@ -99,7 +98,7 @@ void *worker_thread( void *userdata )
     int thr_id = mythr->id;
 
     // Init device context.
-    lycl::AppLyra2REv2 deviceCtx;
+    lycl::AppAllium deviceCtx;
     lycl::device clDevice = mythr->clDevice;
     if (!deviceCtx.onInit(mythr->clDevice))
     {
@@ -209,7 +208,7 @@ void *worker_thread( void *userdata )
         // Scan for nonce
         uint32_t* pdata = workInfo.data;
         uint32_t* ptarget = workInfo.target;
-        const uint32_t Htarg = ptarget[7];
+        const cl_ulong Htarg = *(cl_ulong *)(ptarget + 6);
         const uint32_t offsetN = (maxRuns * clDevice.workSize)*thr_id;
         const uint32_t first_nonce = offsetN + (numRuns * clDevice.workSize);
         uint32_t nonce = first_nonce;
@@ -266,17 +265,13 @@ void *worker_thread( void *userdata )
             if (numPotentialNonces != 0)
             {
                 //Log::print(Log::LT_Notice, "Num potential nonces found: %u", numPotentialNonces);
-                lycl::lyraHash clhash;
+				lycl::alliumHash clhash;
                 deviceCtx.getLatestHashResultForIndex(singleNonce, clhash);
-                // compute bmw hash
-                lycl::lyraHash lhash;
-                lycl::bmwHash(clhash, lhash);
-
-                if (fulltestLyra(lhash, ptarget))
+                if (fulltestAllium(clhash, ptarget))
                 {
                     // add nonce local offset
                     singleNonce += nonce;
-                    work_set_target_ratio(&workInfo, &lhash.h[0]);
+                    work_set_target_ratio(&workInfo, &clhash.h[0]);
                     nonceFound = true;
                     if (numPotentialNonces == 1)
                     {
@@ -296,16 +291,13 @@ void *worker_thread( void *userdata )
                     for (size_t g = 0; g < numRemainingNonces; ++g)
                     {
                         deviceCtx.getLatestHashResultForIndex(m_potentialNonces[g], clhash);
-                        // compute bmw hash
-                        lycl::bmwHash(clhash, lhash);
-
-                        if (fulltestLyra(lhash, ptarget))
+                        if (fulltestAllium(clhash, ptarget))
                         {
                             isMultiNonce = true;
                             // add nonce local offset
                             m_nonces.push_back(m_potentialNonces[g] + nonce); 
 
-                            work_set_target_ratio(&workInfo, &lhash.h[0]);
+                            work_set_target_ratio(&workInfo, &clhash.h[0]);
                         }
                     }
                 }
@@ -408,8 +400,9 @@ void *worker_thread( void *userdata )
 
 int main(int argc, char** argv)
 {
-    Log::print(Log::LT_Notice, "*** lyclMiner beta %s. ***", PACKAGE_VERSION);
-    Log::print(Log::LT_Notice, "Developer: CryptoGraphics ( CrGraphics@protonmail.com ).\n");
+    Log::print(Log::LT_Notice, "*** alliumclMiner beta %s. ***", PACKAGE_VERSION);
+    Log::print(Log::LT_Notice, "Developer: CryptoGraphics ( CrGraphics@protonmail.com ).");
+	Log::print(Log::LT_Notice, "Allium Conversion: Tuxcoin Team - https://tuxcoin.io/\n");
 
     //-----------------------------------------------------------------------------
     // Config file management
@@ -1092,7 +1085,7 @@ int main(int argc, char** argv)
         }
     }
 
-    Log::print(Log::LT_Info, "%d worker threads started, using lyra2REv2 algorithm.", global::numWorkerThreads);
+    Log::print(Log::LT_Info, "%d worker threads started, using allium algorithm.", global::numWorkerThreads);
 
 //-----------------------------------------------------------------------------
 

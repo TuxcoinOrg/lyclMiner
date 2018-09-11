@@ -187,9 +187,9 @@ static void *stratum_thread(void *userdata )
                 {
                     last_block_height = stratum.block_height;
                     if (global::net_diff > 0.)
-                        Log::print(Log::LT_Blue, "lyra2REv2 block %d, diff %.3f", stratum.block_height, global::net_diff);
+                        Log::print(Log::LT_Blue, "allium block %d, diff %.3f", stratum.block_height, global::net_diff);
                     else
-                        Log::print(Log::LT_Blue, "%s lyra2REv2 block %d", global::connectionInfo.short_url.c_str(), stratum.block_height);
+                        Log::print(Log::LT_Blue, "%s allium block %d", global::connectionInfo.short_url.c_str(), stratum.block_height);
                 }
                 restart_threads();
             }

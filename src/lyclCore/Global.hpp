@@ -70,7 +70,7 @@ namespace global
     //! global work info
     extern work g_work;
     //! debug log enabled
-    const bool opt_debug = false;
+    const bool opt_debug = true;
     //! Enable CURLOPT_VERBOSE
     const bool opt_protocol = false;
     //! Stratum connection timeout
@@ -112,7 +112,7 @@ extern double global_hashcount;
 extern double global_hashrate;
 
 //! Show difficulty
-const bool opt_showdiff = false;
+const bool opt_showdiff = true;
 //! stratum difficulty
 extern double stratum_diff; // Gets modified in several stratum factions
 
@@ -124,7 +124,7 @@ extern time_t g_work_time; // Gets modified in stratum_thread()
 
 #define JSON_BUF_LEN 512
 
-const bool opt_debug_diff = false;
+const bool opt_debug_diff = true;
 
 
 #endif // !Global_INCLUDE_ONCE
