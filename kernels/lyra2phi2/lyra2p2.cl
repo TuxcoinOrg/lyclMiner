@@ -383,21 +383,21 @@ __kernel void lyra441p2(__global uint* lyraStates)
   make_next_hyper(6, 1, 7, state, roundPad, notepad);
 
   uint modify;
-  uint prev = 7;
-  uint iterator = 0;
+  uint row = 0;
+  uint pre = 7;
 
-    for (uint i = 0; i<LYRA_ROUNDS; i++) {
-      local uint *shorter = (local uint*)roundPad;
-      if(get_local_id(0) == 0) {
-          shorter[get_local_id(1)] = (uint)(state[0] % 8);
-      }
-      barrier(CLK_LOCAL_MEM_FENCE); // nop
-      modify = shorter[get_local_id(1)];
-      hyper_xor(prev, modify, iterator, state, roundPad, notepad);
-      prev = iterator;
-      iterator = (iterator - 1) & 7;
+  __local uint *shorter = (__local uint*)roundPad;
+  for (int i = 0; i < LYRA_ROUNDS; i++) {
+    if(get_local_id(0) == 0) {
+      shorter[get_local_id(1)] = (uint)(state[0] % 8);
     }
-
+    barrier(CLK_LOCAL_MEM_FENCE); // nop
+    modify = shorter[get_local_id(1)];
+    hyper_xor(pre, modify, row, state, roundPad, notepad);
+    pre = row;
+    row = (row + 3) % 8;
+  }
+  
   notepad += HYPERMATRIX_COUNT * modify;
   for(int loop = 0; loop < 3; loop++) state[loop] ^= notepad[loop * REG_ROW_COUNT];
 

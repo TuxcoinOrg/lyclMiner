@@ -377,24 +377,7 @@ __kernel void lyra441p1(__global uint* hashes, __global uint* lyraStates)
     state[7] = (ulong2)(0x1f83d9abfb41bd6bUL, 0x5be0cd19137e2179UL);
 
     // Absorbing salt, password and basil: this is the only place in which the block length is hard-coded to 512 bits
-    for (int i = 0; i < 12; ++i)
-    {
-        roundLyra(state);
-    }
-	
-    state[0].x ^= 0x20UL;
-    state[0].y ^= 0x20UL;
-    
-    state[1].x ^= 0x20UL;
-    state[1].y ^= 0x01UL;
-    
-    state[2].x ^= 0x04UL;
-    state[2].y ^= 0x04UL;
-    
-    state[3].x ^= 0x80UL;
-    state[3].y ^= 0x0100000000000000UL;
-	
-    for (int i = 0; i < 12; ++i)
+    for (int i = 0; i < 24; ++i)
     {
         roundLyra(state);
     }
